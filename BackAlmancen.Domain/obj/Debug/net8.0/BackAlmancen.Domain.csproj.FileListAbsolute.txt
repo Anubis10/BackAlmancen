@@ -1,0 +1,12 @@
+C:\Practica\BackAlmancen\BackAlmancen.Domain\bin\Debug\net8.0\BackAlmancen.Domain.deps.json
+C:\Practica\BackAlmancen\BackAlmancen.Domain\bin\Debug\net8.0\BackAlmancen.Domain.dll
+C:\Practica\BackAlmancen\BackAlmancen.Domain\bin\Debug\net8.0\BackAlmancen.Domain.pdb
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.csproj.AssemblyReference.cache
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.AssemblyInfoInputs.cache
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.AssemblyInfo.cs
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.csproj.CoreCompileInputs.cache
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.dll
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\refint\BackAlmancen.Domain.dll
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\BackAlmancen.Domain.pdb
+C:\Practica\BackAlmancen\BackAlmancen.Domain\obj\Debug\net8.0\ref\BackAlmancen.Domain.dll

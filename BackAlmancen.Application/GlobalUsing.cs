@@ -1,0 +1,12 @@
+﻿global using System.ComponentModel.DataAnnotations;
+global using Microsoft.AspNetCore.Http;
+global using System.ComponentModel.DataAnnotations.Schema;
+global using AutoMapper;
+global using BackAlmancen.Application.Dtos;
+global using BackAlmancen.Domain.Models;
+global using BackAlmancen.Application.Responses;
+global using MediatR;
+global using BackAlmancen.Application.Contracts;
+global using BackAlmancen.Application.Features.Productos.Queries;
+global using BackAlmancen.Application.Features.Productos.Commands;
+global using Microsoft.AspNetCore.Hosting;

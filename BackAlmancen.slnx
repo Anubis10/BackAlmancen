@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/config/" />
+  <Folder Name="/config/docker-compose/" />
+  <Folder Name="/config/gitlab-ci/" />
+  <Folder Name="/src/" />
+  <Folder Name="/src/Api/">
+    <Project Path="BackAlmancen/BackAlmancen.csproj" />
+  </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="BackAlmancen.Application/BackAlmancen.Application.csproj" />
+    <Project Path="BackAlmancen.Domain/BackAlmancen.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="BackAlmancen.Persistence/BackAlmancen.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/_Ignore Items/" />
+</Solution>
