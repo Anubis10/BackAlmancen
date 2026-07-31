@@ -60,7 +60,7 @@ namespace BackAlmancen
                 });
             }
 
-
+            app.UseCors();
             app.UseAuthorization();
 
             app.MapControllers();

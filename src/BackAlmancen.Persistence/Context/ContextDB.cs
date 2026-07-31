@@ -51,7 +51,7 @@ namespace BackAlmancen.Persistence.Context
                     Name = "Xbox Series S",
                     Description = "Consola portátil retro",
                     AgeRestriction = 18,
-                    Company = "Nintendo",
+                    Company = "Microsoft",
                     Price = 99.99m,
                     ImageUrl = null
                 }
