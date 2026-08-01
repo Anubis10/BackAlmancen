@@ -13,5 +13,8 @@
   <Folder Name="/src/Infrastructure/">
     <Project Path="src/BackAlmancen.Persistence/BackAlmancen.Persistence.csproj" />
   </Folder>
+  <Folder Name="/src/Test/">
+    <Project Path="src/BackAlmancen.Testing/BackAlmancen.Testing.csproj" Id="40a1824d-4608-4db6-a68b-c5f73197f7c3" />
+  </Folder>
   <Folder Name="/_Ignore Items/" />
 </Solution>
