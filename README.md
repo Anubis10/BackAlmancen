@@ -29,12 +29,18 @@ API RESTful desarrollada en .NET (C#) aplicando Clean Architecture, CQRS, Mediat
 La aplicacion utiliza una base de datos en memoria (In-Memory) que se inicializa y siembra con datos iniciales al arrancar la aplicacion. No requiere configuracion previa de servidores de bases de datos.
 
 ### 1. Clonar el repositorio
-```bash
-git clone [https://github.com/Anubis10/BackAlmancen.git](https://github.com/Anubis10/BackAlmancen.git)
+git clone https://github.com/Anubis10/BackAlmancen.git
 cd BackAlmancen
 
 ### Restaurar dependencias
 dotnet restore
 
 ### Ejecutar la API
-dotnet run --project src/BackAlmacen/BackAlmacen.csproj
+ dotnet run --project .\src\BackAlmancen\BackAlmancen.csproj --urls "https://localhost:7135"
+
+ ### Si en el navegador sale una advertencia de certificado ssl ejecutar
+ dotnet dev-certs https --trust
+
+## Ejecutar las pruebas
+
+dotnet test
