@@ -5,7 +5,10 @@ using BackAlmancen.Application.Features.Productos;
 using BackAlmancen.Application.Features.Productos.Commands;
 using BackAlmancen.Application.Features.Productos.Queries;
 using BackAlmancen.Domain.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Moq;
+using Xunit;
 
 namespace BackAlmancen.Testing;
 
@@ -13,11 +16,15 @@ public class ProductoHandlersTests
 {
     private readonly Mock<IRepository<Producto>> _repositoryMock;
     private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<IWebHostEnvironment> _envMock;
 
     public ProductoHandlersTests()
     {
         _repositoryMock = new Mock<IRepository<Producto>>();
         _mapperMock = new Mock<IMapper>();
+        _envMock = new Mock<IWebHostEnvironment>();
+
+               _envMock.Setup(e => e.WebRootPath).Returns("C:\\fake_wwwroot");
     }
 
     [Fact]
@@ -56,9 +63,7 @@ public class ProductoHandlersTests
                        .ReturnsAsync(productoExistente);
 
         var handler = new RecuperarProductoPorIdHandler(_repositoryMock.Object);
-        var query = new RecuperaProductoPorIdQuery() { 
-                                Id= 2
-        };
+        var query = new RecuperaProductoPorIdQuery { Id = 2 };
 
         // Act
         var resultado = await handler.Handle(query, CancellationToken.None);
@@ -90,17 +95,24 @@ public class ProductoHandlersTests
             Company = "Mattel"
         };
 
-        // Mock del Mapper: Convierte ProductoDto -> Producto
         _mapperMock.Setup(m => m.Map<ProductoDto, Producto>(It.IsAny<ProductoDto>()))
                    .Returns(productoEntidad);
 
-        // Mock del Repository: Retorna la entidad agregada
         _repositoryMock.Setup(repo => repo.AddAsync(It.IsAny<Producto>()))
                        .ReturnsAsync(productoEntidad);
 
-        // Instanciar el Handler pasando AMBAS dependencias
+        var loggerMock = new Mock<ILogger<CrearProductoHandler>>();
+
+        // Handler con las dependencias actualizadas
         var handler = new CrearProductoHandler(_repositoryMock.Object, _mapperMock.Object);
-        var command = new CrearProductoCommand { Producto = productoDto };
+
+        // Mapeo directo del DTO o propiedades según tu definición de Command
+        var command = new CrearProductoCommand
+        {
+            Name = productoDto.Name,
+            Price = productoDto.Price,
+            Company = productoDto.Company
+        };
 
         // Act
         var resultado = await handler.Handle(command, CancellationToken.None);
@@ -111,44 +123,53 @@ public class ProductoHandlersTests
         Assert.Equal("Hot Wheels", resultado.Data.Name);
 
         _repositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Producto>()), Times.Once);
-        _mapperMock.Verify(m => m.Map<ProductoDto, Producto>(It.IsAny<ProductoDto>()), Times.Once);
     }
 
     [Fact]
     public async Task ActualizarProducto_DebeRetornarTrue_CuandoElProductoExiste()
     {
         // Arrange
-        // 1. Objeto DTO que recibe el Command
-        var productoDto = new ProductoDto
+        var productoExistente = new Producto
         {
-            Name = "Barbie Divorciada",
-            Price = 29.99m,
-            Company = "Mattel"
+            Id = 1,
+            Name = "Barbie Antigua",
+            Price = 25.00m,
+            Company = "Mattel",
+            ImageUrl = "/uploads/anterior.jpg"
         };
 
-        // 2. Entidad resultante tras el mapeo
-        var productoEntidad = new Producto
+        var productoMapeado = new Producto
         {
             Id = 1,
             Name = "Barbie Divorciada",
             Price = 29.99m,
-            Company = "Mattel"
+            Company = "Mattel",
+            ImageUrl = "/uploads/nueva.jpg"
         };
-
-        // Mock del Repositorio: Actualización exitosa
-        _repositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<Producto>()))
-                       .ReturnsAsync(true);
-
-        // Mock del Mapper: Convierte ProductoDto -> Producto
-        _mapperMock.Setup(m => m.Map<ProductoDto, Producto>(It.IsAny<ProductoDto>()))
-                   .Returns(productoEntidad);
-
-        var handler = new ActualizarProductoHandler(_repositoryMock.Object, _mapperMock.Object);
 
         var command = new ActualizarProductoCommand
         {
-            Producto = productoDto
+            Id = 1,
+            Name = "Barbie Divorciada",
+            Price = 29.99m,
+            Company = "Mattel",
+            ImageUrl = "/uploads/nueva.jpg"
         };
+
+        // 1. Configurar GetByIdAsync para simular que el producto sí existe en BD
+        _repositoryMock.Setup(repo => repo.GetByIdAsync(command.Id))
+                       .ReturnsAsync(productoExistente);
+
+        // 2. Configurar el Mapper para recibir el ActualizarProductoCommand
+        _mapperMock.Setup(m => m.Map<ProductoDto, Producto>(It.IsAny<ActualizarProductoCommand>()))
+                   .Returns(productoMapeado);
+
+        // 3. Configurar UpdateAsync
+        _repositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<Producto>()))
+                       .ReturnsAsync(true);
+
+        var loggerMock = new Mock<ILogger<ActualizarProductoHandler>>();
+        var handler = new ActualizarProductoHandler(_repositoryMock.Object, _mapperMock.Object, _envMock.Object, loggerMock.Object);
 
         // Act
         var resultado = await handler.Handle(command, CancellationToken.None);
@@ -156,27 +177,32 @@ public class ProductoHandlersTests
         // Assert
         Assert.NotNull(resultado);
         Assert.True(resultado.Data);
+        _repositoryMock.Verify(repo => repo.GetByIdAsync(command.Id), Times.Once);
         _repositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Producto>()), Times.Once);
-        _mapperMock.Verify(m => m.Map<ProductoDto, Producto>(It.IsAny<ProductoDto>()), Times.Once);
     }
 
     [Fact]
     public async Task EliminarProducto_DebeRetornarFalse_CuandoElProductoNoExiste()
     {
         // Arrange
-        _repositoryMock.Setup(repo => repo.DeleteAsync(99))
-                       .ReturnsAsync(false);
+        // Como el producto no existe, GetByIdAsync debe retornar null
+        _repositoryMock.Setup(repo => repo.GetByIdAsync(99))
+                       .ReturnsAsync((Producto?)null);
 
-        var handler = new EliminarProductoHandler(_repositoryMock.Object);
-        var command = new EliminarProductoQuery { Id = 99 };
+        var loggerMock = new Mock<ILogger<EliminarProductoHandler>>();
+        var handler = new EliminarProductoHandler(_repositoryMock.Object, _envMock.Object, loggerMock.Object);
+        var query = new EliminarProductoQuery { Id = 99 };
 
         // Act
-        var resultado = await handler.Handle(command, CancellationToken.None);
+        var resultado = await handler.Handle(query, CancellationToken.None);
 
         // Assert
         Assert.NotNull(resultado);
-        Assert.False(resultado.Data);
-        Assert.False(resultado.Success);
-        _repositoryMock.Verify(repo => repo.DeleteAsync(99), Times.Once);
+        Assert.False(resultado.Success); // El Handler retorna Success = false cuando no lo encuentra
+        _repositoryMock.Verify(repo => repo.GetByIdAsync(99), Times.Once);
+
+        // Verificamos que NUNCA intentó borrar en BD porque ya sabía que no existía
+        _repositoryMock.Verify(repo => repo.DeleteAsync(It.IsAny<int>()), Times.Never);
     }
+        
 }
