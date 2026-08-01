@@ -13,7 +13,7 @@ public class CrearProductoHandler : IRequestHandler<CrearProductoCommand, Respon
     public async Task<Response<Producto>> Handle(CrearProductoCommand request, CancellationToken cancellationToken)
     {
         var respuesta = new Response<Producto>();
-        var nuevo = _mapper.Map<ProductoDto, Producto>(request.Producto);
+        var nuevo = _mapper.Map<ProductoDto, Producto>(request);
         respuesta.Data = await _repository.AddAsync(nuevo);
         return respuesta;
     }

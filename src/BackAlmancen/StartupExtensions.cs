@@ -59,7 +59,7 @@ namespace BackAlmancen
                     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BackAlmancen BackEnd"));
                 });
             }
-
+            app.UseStaticFiles();
             app.UseCors();
             app.UseAuthorization();
 
